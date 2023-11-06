@@ -1,6 +1,6 @@
 # Part 5: Bloglist Frontend
 
-> This section focuses on the different possibilities of testing React code. It also delves into the implementation of token based authentication which enables users to log in to the application.
+> This section deals with the implementation of token based authentication for a blog application which enables users to log in to the application, and require token based access to interact with the application.
 
 ## Scope
 
