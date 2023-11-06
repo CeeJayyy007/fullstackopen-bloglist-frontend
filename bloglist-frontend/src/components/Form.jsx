@@ -1,3 +1,5 @@
+import Title from "./Title";
+
 // login form
 const loginForm = (
   handleLogin,
@@ -8,7 +10,7 @@ const loginForm = (
 ) => {
   return (
     <div>
-      <h2>Log in to application</h2>
+      <Title title="Log in to application" />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -34,4 +36,54 @@ const loginForm = (
   );
 };
 
-export default loginForm;
+// add new blog
+const createBlogForm = (
+  handleCreateBlog,
+  setTitle,
+  setAuthor,
+  setUrl,
+  title,
+  author,
+  url
+) => {
+  return (
+    <div>
+      <Title title="Create new blog" />
+      <form onSubmit={handleCreateBlog}>
+        <div>
+          Title:
+          <input
+            type="text"
+            value={title}
+            name="title"
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+
+        <div>
+          Author:
+          <input
+            type="text"
+            value={author}
+            name="author"
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+
+        <div>
+          URL:
+          <input
+            type="text"
+            value={url}
+            name="url"
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+
+        <button type="submit">Create</button>
+      </form>
+    </div>
+  );
+};
+
+export { loginForm, createBlogForm };
