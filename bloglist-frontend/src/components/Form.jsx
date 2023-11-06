@@ -1,4 +1,5 @@
 import Title from "./Title";
+import Notification from "./Notification";
 
 // login form
 const loginForm = (
@@ -6,11 +7,14 @@ const loginForm = (
   setUsername,
   setPassword,
   username,
-  password
+  password,
+  errorMessage,
+  error
 ) => {
   return (
     <div>
       <Title title="Log in to application" />
+      {errorMessage && <Notification message={errorMessage} error={error} />}
       <form onSubmit={handleLogin}>
         <div>
           username
