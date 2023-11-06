@@ -4,6 +4,8 @@ import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
 import { loginForm, createBlogForm } from "./components/Form";
 import Title from "./components/Title";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -13,10 +15,13 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, [blogs]);
+  }, []);
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser");
@@ -42,7 +47,11 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      console.log("wrong credentials");
+      setError(true);
+      setErrorMessage("Wrong username or password");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -60,8 +69,19 @@ const App = () => {
       const blog = await blogService.create(newBlog);
 
       setBlogs(blogs.concat(blog));
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      setSuccessMessage(`a new blog ${blog.title} by ${blog.author} added`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     } catch (exception) {
-      console.log("error creating blog");
+      setError(true);
+      setErrorMessage("error creating blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -72,13 +92,23 @@ const App = () => {
   };
 
   if (user === null) {
-    return loginForm(handleLogin, setUsername, setPassword, username, password);
+    return loginForm(
+      handleLogin,
+      setUsername,
+      setPassword,
+      username,
+      password,
+      errorMessage,
+      error
+    );
   }
 
   return (
     <div>
       <div>
         <Title title="Blogs" />
+        {successMessage && <Notification message={successMessage} />}
+        {errorMessage && <Notification message={errorMessage} error={error} />}
         <p>
           <strong>{user.name}</strong> logged in{" "}
           <button onClick={handleLogout}>Logout</button>
