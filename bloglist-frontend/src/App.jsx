@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
-import { loginForm, createBlogForm } from "./components/Form";
 import Title from "./components/Title";
+import LoginForm from "./components/LoginForm";
+import CreateBlogForm from "./components/CreateBlogForm";
 import Notification from "./components/Notification";
 import "./index.css";
 
@@ -92,14 +93,18 @@ const App = () => {
   };
 
   if (user === null) {
-    return loginForm(
-      handleLogin,
-      setUsername,
-      setPassword,
-      username,
-      password,
-      errorMessage,
-      error
+    return (
+      <>
+        <Title title="Log in to application" />
+        {errorMessage && <Notification message={errorMessage} error={error} />}
+        <LoginForm
+          handleLogin={handleLogin}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          username={username}
+          password={password}
+        />
+      </>
     );
   }
 
@@ -113,16 +118,16 @@ const App = () => {
           <strong>{user.name}</strong> logged in{" "}
           <button onClick={handleLogout}>Logout</button>
         </p>
+        <CreateBlogForm
+          handleCreateBlog={handleCreateBlog}
+          handleTitleChange={({ target }) => setTitle(target.value)}
+          handleAuthorChange={({ target }) => setAuthor(target.value)}
+          handleUrlChange={({ target }) => setUrl(target.value)}
+          title={title}
+          author={author}
+          url={url}
+        />
 
-        {createBlogForm(
-          handleCreateBlog,
-          setTitle,
-          setAuthor,
-          setUrl,
-          title,
-          author,
-          url
-        )}
         <br />
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
