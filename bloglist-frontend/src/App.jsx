@@ -28,6 +28,7 @@ const App = () => {
     }
   }, []);
 
+  // login handler
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -45,6 +46,7 @@ const App = () => {
     }
   };
 
+  // create blog handler
   const handleCreateBlog = async (event) => {
     event.preventDefault();
 
@@ -63,6 +65,7 @@ const App = () => {
     }
   };
 
+  // logout handler
   const handleLogout = () => {
     window.localStorage.removeItem("loggedInUser");
     setUser(null);
