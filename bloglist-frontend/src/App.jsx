@@ -18,7 +18,9 @@ const App = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, [blog]);
 
   useEffect(() => {
@@ -93,7 +95,11 @@ const App = () => {
         likes: blogToUpdate.likes + 1,
       });
 
-      setBlogs(blogs.map((blog) => (blog.id === id ? updatedBlog : blog)));
+      setBlogs(
+        blogs
+          .map((blog) => (blog.id === id ? updatedBlog : blog))
+          .sort((a, b) => b.likes - a.likes)
+      );
     } catch (exception) {
       const error = exception.response.data.error;
       errorHandler(error, "error updating blog");
