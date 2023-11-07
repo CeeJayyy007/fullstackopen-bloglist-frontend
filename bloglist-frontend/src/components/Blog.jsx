@@ -8,11 +8,11 @@ const Blog = ({ blog }) => {
     border: "solid",
     borderWidth: 1,
     marginBottom: 5,
+    borderRadius: 4,
   };
 
   const handleView = () => {
     setView(!view);
-    console.log("button clicked");
   };
 
   return (
