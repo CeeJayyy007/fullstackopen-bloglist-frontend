@@ -11,19 +11,15 @@ import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [blog, setBlog] = useState(null);
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  }, [blog]);
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser");
@@ -41,18 +37,14 @@ const App = () => {
   }
 
   // login handler
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
+  const login = async (credentials) => {
     try {
-      const user = await loginService.login({ username, password });
+      const user = await loginService.login(credentials);
 
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
       setUser(user);
-      setUsername("");
-      setPassword("");
     } catch (exception) {
       setError(true);
       setErrorMessage("Wrong username or password");
@@ -69,14 +61,19 @@ const App = () => {
       blogFormRef.current.toggleVisibility();
 
       setBlogs(blogs.concat(blog));
-
+      setBlog(blog);
       setSuccessMessage(`a new blog ${blog.title} by ${blog.author} added`);
       setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);
     } catch (exception) {
+      const error = exception.response.data.error;
       setError(true);
-      setErrorMessage("error creating blog");
+      if (error.includes("token")) {
+        window.localStorage.removeItem("loggedInUser");
+        setUser(null);
+      }
+      setErrorMessage(`error creating blog: ${error}`);
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
@@ -96,14 +93,7 @@ const App = () => {
     return (
       <Togglable buttonLabel="Login">
         <Title title="Log in to application" />
-
-        <LoginForm
-          handleLogin={handleLogin}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          username={username}
-          password={password}
-        />
+        <LoginForm login={login} />
       </Togglable>
     );
   };
@@ -129,7 +119,7 @@ const App = () => {
         )}
         <br />
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} user={user} />
         ))}
       </div>
     </div>
