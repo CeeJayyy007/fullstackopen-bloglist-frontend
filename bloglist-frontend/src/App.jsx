@@ -33,6 +33,9 @@ const App = () => {
     }
   }, []);
 
+  // create blog ref for togglable
+  const blogFormRef = useRef();
+
   // do not render anything if notes is still null
   if (!blogs) {
     return null;
@@ -107,6 +110,7 @@ const App = () => {
   };
 
   console.log("blogs", blogs);
+
   const deleteBlog = async (id) => {
     const blogToDelete = blogs.find((blog) => blog.id === id);
 
@@ -130,9 +134,6 @@ const App = () => {
     window.localStorage.removeItem("loggedInUser");
     setUser(null);
   };
-
-  // create blog ref for togglable
-  const blogFormRef = useRef();
 
   const loginForm = () => {
     return (
