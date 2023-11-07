@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 import CreateBlogForm from "./components/CreateBlogForm";
 import Notification from "./components/Notification";
 import "./index.css";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -34,6 +35,11 @@ const App = () => {
     }
   }, []);
 
+  // do not render anything if notes is still null
+  if (!blogs) {
+    return null;
+  }
+
   // login handler
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -59,6 +65,8 @@ const App = () => {
   // create blog handler
   const handleCreateBlog = async (event) => {
     event.preventDefault();
+
+    blogFormRef.current.toggleVisibility();
 
     const newBlog = {
       title: title,
@@ -92,11 +100,14 @@ const App = () => {
     setUser(null);
   };
 
-  if (user === null) {
+  // create blog ref for togglable
+  const blogFormRef = useRef();
+
+  const loginForm = () => {
     return (
-      <>
+      <Togglable buttonLabel="Login">
         <Title title="Log in to application" />
-        {errorMessage && <Notification message={errorMessage} error={error} />}
+
         <LoginForm
           handleLogin={handleLogin}
           handleUsernameChange={({ target }) => setUsername(target.value)}
@@ -104,9 +115,9 @@ const App = () => {
           username={username}
           password={password}
         />
-      </>
+      </Togglable>
     );
-  }
+  };
 
   return (
     <div>
@@ -114,20 +125,27 @@ const App = () => {
         <Title title="Blogs" />
         {successMessage && <Notification message={successMessage} />}
         {errorMessage && <Notification message={errorMessage} error={error} />}
-        <p>
-          <strong>{user.name}</strong> logged in{" "}
-          <button onClick={handleLogout}>Logout</button>
-        </p>
-        <CreateBlogForm
-          handleCreateBlog={handleCreateBlog}
-          handleTitleChange={({ target }) => setTitle(target.value)}
-          handleAuthorChange={({ target }) => setAuthor(target.value)}
-          handleUrlChange={({ target }) => setUrl(target.value)}
-          title={title}
-          author={author}
-          url={url}
-        />
+        {!user && loginForm()}
+        {user && (
+          <>
+            <p>
+              <strong>{user && user.name}</strong> logged in{" "}
+              <button onClick={handleLogout}>Logout</button>
+            </p>
 
+            <Togglable buttonLabel="Create new list" ref={blogFormRef}>
+              <CreateBlogForm
+                handleCreateBlog={handleCreateBlog}
+                handleTitleChange={({ target }) => setTitle(target.value)}
+                handleAuthorChange={({ target }) => setAuthor(target.value)}
+                handleUrlChange={({ target }) => setUrl(target.value)}
+                title={title}
+                author={author}
+                url={url}
+              />
+            </Togglable>
+          </>
+        )}
         <br />
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
