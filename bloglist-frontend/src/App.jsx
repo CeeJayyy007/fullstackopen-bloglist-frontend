@@ -63,24 +63,13 @@ const App = () => {
   };
 
   // create blog handler
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
-
-    blogFormRef.current.toggleVisibility();
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url,
-    };
-
+  const createBlog = async (newBlogObject) => {
     try {
-      const blog = await blogService.create(newBlog);
+      const blog = await blogService.create(newBlogObject);
+      blogFormRef.current.toggleVisibility();
 
       setBlogs(blogs.concat(blog));
-      setTitle("");
-      setAuthor("");
-      setUrl("");
+
       setSuccessMessage(`a new blog ${blog.title} by ${blog.author} added`);
       setTimeout(() => {
         setSuccessMessage(null);
@@ -134,15 +123,7 @@ const App = () => {
             </p>
 
             <Togglable buttonLabel="Create new list" ref={blogFormRef}>
-              <CreateBlogForm
-                handleCreateBlog={handleCreateBlog}
-                handleTitleChange={({ target }) => setTitle(target.value)}
-                handleAuthorChange={({ target }) => setAuthor(target.value)}
-                handleUrlChange={({ target }) => setUrl(target.value)}
-                title={title}
-                author={author}
-                url={url}
-              />
+              <CreateBlogForm createBlog={createBlog} />
             </Togglable>
           </>
         )}
