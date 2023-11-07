@@ -1,24 +1,38 @@
+import { useState } from "react";
+
 // login form
-const LoginForm = ({
-  handleLogin,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password,
-}) => {
+const LoginForm = ({ login }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    login({
+      username,
+      password,
+    });
+
+    setUsername("");
+    setPassword("");
+  };
+
   return (
     <div>
       <form onSubmit={handleLogin}>
         <div>
           Username:
-          <input value={username} onChange={handleUsernameChange} />
+          <input
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
         <div>
           Password
           <input
             type="password"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={({ target }) => setPassword(target.value)}
           />
         </div>
         <button type="submit">Login</button>
