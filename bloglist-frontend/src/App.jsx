@@ -106,6 +106,25 @@ const App = () => {
     }
   };
 
+  console.log("blogs", blogs);
+  const deleteBlog = async (id) => {
+    const blogToDelete = blogs.find((blog) => blog.id === id);
+
+    if (
+      window.confirm(
+        `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
+      )
+    ) {
+      try {
+        await blogService.remove(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+      } catch (exception) {
+        const error = exception.response.data.error;
+        errorHandler(error, "error deleting blog");
+      }
+    }
+  };
+
   // logout handler
   const handleLogout = () => {
     window.localStorage.removeItem("loggedInUser");
@@ -145,7 +164,13 @@ const App = () => {
         )}
         <br />
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateLikes={updateLikes}
+            deleteBlog={deleteBlog}
+            user={user}
+          />
         ))}
       </div>
     </div>
