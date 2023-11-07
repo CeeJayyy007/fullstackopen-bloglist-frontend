@@ -54,13 +54,24 @@ const App = () => {
     }
   };
 
+  const errorHandler = (error, message) => {
+    setError(true);
+    if (error.includes("token")) {
+      window.localStorage.removeItem("loggedInUser");
+      setUser(null);
+    }
+    setErrorMessage(`${message}: ${error}`);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
+
   // create blog handler
   const createBlog = async (newBlogObject) => {
     try {
       const blog = await blogService.create(newBlogObject);
       blogFormRef.current.toggleVisibility();
 
-      setBlogs(blogs.concat(blog));
       setBlog(blog);
       setSuccessMessage(`a new blog ${blog.title} by ${blog.author} added`);
       setTimeout(() => {
@@ -68,15 +79,24 @@ const App = () => {
       }, 5000);
     } catch (exception) {
       const error = exception.response.data.error;
-      setError(true);
-      if (error.includes("token")) {
-        window.localStorage.removeItem("loggedInUser");
-        setUser(null);
-      }
-      setErrorMessage(`error creating blog: ${error}`);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      errorHandler(error, "error creating blog");
+    }
+  };
+
+  // update blog handler
+  const updateLikes = async (id) => {
+    const blogToUpdate = blogs.find((blog) => blog.id === id);
+
+    try {
+      const updatedBlog = await blogService.update(id, {
+        ...blogToUpdate,
+        likes: blogToUpdate.likes + 1,
+      });
+
+      setBlogs(blogs.map((blog) => (blog.id === id ? updatedBlog : blog)));
+    } catch (exception) {
+      const error = exception.response.data.error;
+      errorHandler(error, "error updating blog");
     }
   };
 
@@ -119,7 +139,7 @@ const App = () => {
         )}
         <br />
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} user={user} />
+          <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
         ))}
       </div>
     </div>
