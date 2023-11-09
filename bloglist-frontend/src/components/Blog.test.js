@@ -6,6 +6,7 @@ import Blog from "./Blog";
 
 describe("<Blog />", () => {
   let container;
+  let mockHandler;
 
   beforeEach(() => {
     const blog = {
@@ -20,7 +21,11 @@ describe("<Blog />", () => {
       },
     };
 
-    container = render(<Blog blog={blog} />).container;
+    mockHandler = jest.fn();
+
+    container = render(
+      <Blog blog={blog} updateLikes={mockHandler} />
+    ).container;
   });
 
   test("renders content", () => {
@@ -44,7 +49,7 @@ describe("<Blog />", () => {
     expect(blogDetailsDiv).toHaveStyle("display: none");
   });
 
-  test("clicking the show buttons shows url and likwa", async () => {
+  test("clicking the show buttons shows url and likes", async () => {
     const blogDetailsDiv = container.querySelector(".blogDetailsDiv");
     expect(blogDetailsDiv).toHaveStyle("display: none");
 
@@ -56,5 +61,17 @@ describe("<Blog />", () => {
 
     expect(blogDetailsDiv).not.toHaveStyle("display: none");
     expect(urlDiv.textContent).toContain("https://blog.test.com");
+  });
+
+  test("clicking the button calls event handler twice", async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText("view");
+    await user.click(button);
+
+    const likeButton = screen.getByText("like");
+    await user.click(likeButton);
+    await user.click(likeButton);
+
+    expect(mockHandler.mock.calls).toHaveLength(2);
   });
 });
