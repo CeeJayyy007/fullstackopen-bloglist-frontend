@@ -31,7 +31,7 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
       </div>
 
       <div style={{ display: view ? " " : "none" }} className="blogDetailsDiv">
-        <div>{blog.url}</div>
+        <div className="urlDiv">{blog.url}</div>
         <div>
           {blog.likes}
           {"   "}

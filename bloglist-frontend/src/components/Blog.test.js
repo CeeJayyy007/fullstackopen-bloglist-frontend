@@ -11,7 +11,7 @@ describe("<Blog />", () => {
     const blog = {
       title: "Component testing is done with react-testing-library",
       author: "Frank Mckinley",
-      ur: "https://blog.test.com",
+      url: "https://blog.test.com",
       likes: 5,
       user: {
         username: "test",
@@ -35,12 +35,26 @@ describe("<Blog />", () => {
 
   test("renders title and author but not url and likes", () => {
     const titleDiv = container.querySelector(".titleDiv");
-    const urlDiv = container.querySelector(".blogDetailsDiv");
+    const blogDetailsDiv = container.querySelector(".blogDetailsDiv");
 
     expect(titleDiv.textContent).toContain(
       "Component testing is done with react-testing-library"
     );
     expect(titleDiv).not.toHaveStyle("display: none");
-    expect(urlDiv).toHaveStyle("display: none");
+    expect(blogDetailsDiv).toHaveStyle("display: none");
+  });
+
+  test("clicking the show buttons shows url and likwa", async () => {
+    const blogDetailsDiv = container.querySelector(".blogDetailsDiv");
+    expect(blogDetailsDiv).toHaveStyle("display: none");
+
+    const user = userEvent.setup();
+    const button = screen.getByText("view");
+    await user.click(button);
+
+    const urlDiv = container.querySelector(".urlDiv");
+
+    expect(blogDetailsDiv).not.toHaveStyle("display: none");
+    expect(urlDiv.textContent).toContain("https://blog.test.com");
   });
 });
