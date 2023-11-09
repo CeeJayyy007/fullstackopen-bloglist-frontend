@@ -7,6 +7,7 @@ import Blog from "./Blog";
 describe("<Blog />", () => {
   let container;
   let mockHandler;
+  let user;
 
   beforeEach(() => {
     const blog = {
@@ -21,6 +22,7 @@ describe("<Blog />", () => {
       },
     };
 
+    user = userEvent.setup();
     mockHandler = jest.fn();
 
     container = render(
@@ -35,6 +37,7 @@ describe("<Blog />", () => {
       "Component testing is done with react-testing-library | Frank Mckinley"
     );
 
+    expect(element).toBeDefined();
     expect(blogDiv).toBeDefined();
   });
 
@@ -53,7 +56,6 @@ describe("<Blog />", () => {
     const blogDetailsDiv = container.querySelector(".blogDetailsDiv");
     expect(blogDetailsDiv).toHaveStyle("display: none");
 
-    const user = userEvent.setup();
     const button = screen.getByText("view");
     await user.click(button);
 
@@ -64,7 +66,6 @@ describe("<Blog />", () => {
   });
 
   test("clicking the button calls event handler twice", async () => {
-    const user = userEvent.setup();
     const button = screen.getByText("view");
     await user.click(button);
 
