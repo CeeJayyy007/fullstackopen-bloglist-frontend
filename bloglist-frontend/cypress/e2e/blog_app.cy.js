@@ -34,4 +34,20 @@ describe("Blog app", function () {
         .and("have.css", "border-style", "solid");
     });
   });
+
+  describe("When logged in", function () {
+    beforeEach(function () {
+      cy.login({ username: "James", password: "000000" });
+    });
+
+    it("A blog can be created", function () {
+      cy.contains("Create new list").click();
+      cy.get("#title-input").type("all about harry potter");
+      cy.get("#author-input").type("J. K. Rowling");
+      cy.get("#url-input").type("https://www.google.com/");
+      cy.get("#create-button").click();
+
+      cy.contains("all about harry potter");
+    });
+  });
 });
