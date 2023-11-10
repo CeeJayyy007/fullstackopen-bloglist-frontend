@@ -63,7 +63,7 @@ describe("Blog app", function () {
       cy.contains("1");
     });
 
-    it("A user who created a blog can delete it", function () {
+    it("only user who created a blog can see the delete button and delete it", function () {
       cy.contains("Create new list").click();
       cy.createBlog({
         title: "Testing delete",
