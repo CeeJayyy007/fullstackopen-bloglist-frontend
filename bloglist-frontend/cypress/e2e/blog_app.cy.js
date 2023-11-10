@@ -49,5 +49,18 @@ describe("Blog app", function () {
 
       cy.contains("all about harry potter");
     });
+
+    it("A user can like  blog", function () {
+      cy.contains("Create new list").click();
+      cy.createBlog({
+        title: "new blog",
+        author: "new author",
+        url: "www.newurl.com",
+      });
+
+      cy.contains("view").click();
+      cy.contains("like").click();
+      cy.contains("1");
+    });
   });
 });
