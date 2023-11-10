@@ -14,4 +14,24 @@ describe("Blog app", function () {
     cy.contains("Blogs");
     cy.contains("Login").click();
   });
+
+  describe("Login", function () {
+    it("succeeds with correct credentials", function () {
+      cy.contains("Login").click();
+      cy.get("#username").type("James");
+      cy.get("#password").type("000000");
+      cy.get("#login-button").click();
+      cy.contains("James Bond logged in");
+    });
+
+    it("fails with wrong credentials", function () {
+      cy.contains("Login").click();
+      cy.get("#username").type("James");
+      cy.get("#password").type("123456");
+      cy.get("#login-button").click();
+      cy.contains("Wrong username or password")
+        .and("have.css", "color", "rgb(255, 0, 0)")
+        .and("have.css", "border-style", "solid");
+    });
+  });
 });
