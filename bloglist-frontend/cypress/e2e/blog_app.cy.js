@@ -83,5 +83,41 @@ describe("Blog app", function () {
           cy.contains("Testing delete").should("not.exist");
         });
     });
+
+    describe("and several blogs", function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: "This is the first blog",
+          author: "new author 1",
+          url: "www.newurl.com",
+        });
+        cy.createBlog({
+          title: "This is the second blog",
+          author: "new author 2",
+          url: "www.newurl.com",
+        });
+        cy.createBlog({
+          title: "This is the third blog",
+          author: "new author 3",
+          url: "www.newurl.com",
+        });
+      });
+
+      it("like last note and see if it is moved to top", function () {
+        cy.get(".blogDiv").eq(0).should("contain", "This is the first blog");
+        cy.get(".blogDiv").eq(1).should("contain", "This is the second blog");
+        cy.get(".blogDiv")
+          .eq(2)
+          .should("contain", "This is the third blog")
+          .as("theBlog");
+
+        cy.get("@theBlog").contains("view").click();
+        cy.get("@theBlog").contains("like").click();
+
+        cy.get(".blogDiv").eq(0).should("contain", "This is the third blog");
+        cy.get(".blogDiv").eq(1).should("contain", "This is the first blog");
+        cy.get(".blogDiv").eq(2).should("contain", "This is the second blog");
+      });
+    });
   });
 });
