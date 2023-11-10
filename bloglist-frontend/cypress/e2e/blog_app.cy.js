@@ -62,5 +62,26 @@ describe("Blog app", function () {
       cy.contains("like").click();
       cy.contains("1");
     });
+
+    it("A user who created a blog can delete it", function () {
+      cy.contains("Create new list").click();
+      cy.createBlog({
+        title: "Testing delete",
+        author: "new author",
+        url: "www.newurl.com",
+      });
+
+      cy.contains("Logout").click();
+      cy.contains("view").click();
+      cy.should("not.contain", "remove");
+
+      cy.login({ username: "James", password: "000000" });
+      cy.contains("view").click();
+      cy.contains("remove")
+        .click()
+        .then(() => {
+          cy.contains("Testing delete").should("not.exist");
+        });
+    });
   });
 });
