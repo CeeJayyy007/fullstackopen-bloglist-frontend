@@ -10,12 +10,8 @@ describe("Blog app", function () {
     cy.visit("http://localhost:5173");
   });
 
-  it("front page can be opened", function () {
-    cy.contains("Blogs");
-    cy.contains("Login");
-  });
-
   it("login form is shown", function () {
+    cy.contains("Blogs");
     cy.contains("Login").click();
   });
 });
